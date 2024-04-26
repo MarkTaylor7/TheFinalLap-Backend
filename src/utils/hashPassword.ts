@@ -19,6 +19,6 @@ export function hashPassword (password: string): password {
 }
 
 export function verifyPassword (password: string, salt: string, hash: string) {
-  const verifyHash = crypto.pbkdf2Sync(password, salt, ITERATIONS, KEY_LENGTH, 'sha512').toString('hex');
-  return hash === verifyHash;
+  const verifyHash = crypto.pbkdf2Sync(password, salt, ITERATIONS, KEY_LENGTH, 'sha512').toString('hex')
+  return hash === verifyHash
 }

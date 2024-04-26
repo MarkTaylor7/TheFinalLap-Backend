@@ -25,4 +25,3 @@ export const success = (data: any, message?: string): RESTObject => {
     }
   }
 }
-
