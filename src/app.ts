@@ -1,20 +1,51 @@
-import express, { type Request, type Response } from 'express'
-import db from './database'
-import { asyncHandler } from './utils/async-handler'
+import express, { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import pool from './database';
+import jwt from 'jsonwebtoken';
 
-const app = express()
-const port = 3000
+const app = express();
+app.use(express.json());
 
-app.get('/users', asyncHandler(async (req: Request, res: Response) => {
+app.post('/register', async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 8);
+
   try {
-    const [rows] = await db.execute('SELECT * FROM users')
-    res.json(rows)
+    const [result] = await pool.execute(
+      `INSERT INTO users (username, password) VALUES (?, ?)`,
+      [username, hashedPassword]
+    );
+    res.status(201).send({ message: "User registered successfully!" });
   } catch (error) {
-    console.error('Error fetching users:', error)
-    res.status(500).send('An error occurred')
+    res.status(500).send({ message: "User registration failed" });
   }
-}))
+});
 
-app.listen(port, () => {
-  console.log(`App running on http://localhost:${port}`)
-})
+app.post('/login', async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  try {
+    const [users] = await pool.execute<any[]>(`SELECT * FROM users WHERE username = ?`, [username]);
+
+    if (users.length > 0) {
+      const userValid = await bcrypt.compare(password, users[0].password);
+
+      if (userValid) {
+        const token = jwt.sign({ id: users[0].id }, 'your_jwt_secret', { expiresIn: '24h' });
+        res.status(200).send({ message: "Login successful!", token });
+      } else {
+        res.status(401).send({ message: "Invalid credentials" });
+      }
+    } else {
+      res.status(404).send({ message: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Authentication failed" });
+  }
+});
+
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
