@@ -27,7 +27,8 @@
     "eslint-plugin-promise": "^6.1.1",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "@babel/plugin-proposal-private-property-in-object"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
