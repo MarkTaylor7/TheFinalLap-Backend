@@ -1,12 +1,11 @@
-import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import pool from './utils/database';
+import pool from '../utils/database';
 import jwt from 'jsonwebtoken';
+import { Router, type Request, type Response } from 'express'
 
-const app = express();
-app.use(express.json());
+const router = Router()
 
-app.post('/register', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 8);
 
@@ -17,11 +16,12 @@ app.post('/register', async (req: Request, res: Response) => {
     );
     res.status(201).send({ message: "User registered successfully!" });
   } catch (error) {
+    console.error(error)
     res.status(500).send({ message: "User registration failed" });
   }
 });
 
-app.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   try {
@@ -43,3 +43,5 @@ app.post('/login', async (req: Request, res: Response) => {
     res.status(500).send({ message: "Authentication failed" });
   }
 });
+
+export default router

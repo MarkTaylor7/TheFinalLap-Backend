@@ -1,5 +1,6 @@
 import express from 'express'
-import { userRouter, bookRouter } from './api'
+import { userRouter, bookRouter, authRouter } from './api'
+
 
 const PORT = process.env.PORT ?? 5001
 
@@ -9,6 +10,7 @@ app.use(express.json())
 
 app.use('/api/user', userRouter)
 app.use('/api/book', bookRouter)
+app.use('/api/authentication', authRouter)
 
 /**
  * Exercise:
