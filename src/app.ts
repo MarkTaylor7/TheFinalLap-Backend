@@ -2,9 +2,11 @@ import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import pool from './utils/database';
 import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.post('/register', async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -32,6 +34,13 @@ app.post('/login', async (req: Request, res: Response) => {
 
       if (userValid) {
         const token = jwt.sign({ id: users[0].id }, 'your_jwt_secret', { expiresIn: '24h' });
+        
+        res.cookie('auth_token', token, {
+          httpOnly: true, // The cookie is only accessible by the web server
+          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production environment
+          maxAge: 24 * 60 * 60 * 1000 // Cookie expires in 1 day
+        });
+
         res.status(200).send({ message: "Login successful!", token });
       } else {
         res.status(401).send({ message: "Invalid credentials" });
