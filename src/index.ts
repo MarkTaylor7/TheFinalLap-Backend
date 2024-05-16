@@ -1,16 +1,21 @@
 import express from 'express'
 import { userRouter, bookRouter, authRouter } from './api'
-
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 const PORT = process.env.PORT ?? 5001
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
 app.use('/api/user', userRouter)
 app.use('/api/book', bookRouter)
 app.use('/api/authentication', authRouter)
+
+app.use(cookieParser());
 
 /**
  * Exercise:

@@ -6,7 +6,7 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await fetch('http://localhost:3001/login', {
+    const response = await fetch('http://localhost:5001/api/authentication/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -15,6 +15,14 @@ const LoginForm: React.FC = () => {
     });
     const data = await response.json();
     alert(data.message);
+    const response2 = await fetch('http://localhost:5001/api/authentication/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    const data2 = await response2.json();
   };
 
   return (
